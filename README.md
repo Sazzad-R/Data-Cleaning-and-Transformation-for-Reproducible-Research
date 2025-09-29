@@ -17,12 +17,3 @@ library(knitr)
 4. Standardize categorical entries
 5. Handle out-of-range and missing values
 6. Save the cleaned dataset as a CSV
-
-#6. Final Inspection and Save the Cleaned Dataset
-summary(messy_data5)
-str(messy_data5)
-
-##**Save the transformed dataset**:
-if (!dir.exists("data_processed")) dir.create("data_processed")
-write_csv(messy_data, "data_processed/cleaned_field_data.csv")
-
