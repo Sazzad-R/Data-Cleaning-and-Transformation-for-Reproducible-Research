@@ -1,0 +1,62 @@
+
+#' ### Step 1: Set up your R environment and create the messy dataset
+# Load tidyverse for data manipulation
+library(tidyverse)
+library(knitr)
+#' 2. **Create the messy dataset**:
+# Create a messy simulated dataset
+messy_data <- tibble(
+ID = 1:7,
+ObservationDate = c("2023-01-15", "Jan 20, 2023", "01/25/2025", "2023-02-05", "missing",
+"2023-02-15", "03/01/2023"),
+Temperature_C = c("15.2", "18.0", "14.5", "invalid", "17.3", "20.1", NA),
+Humidity_Percent = c(70, -72, NA, 65, 780, 80, 71),
+Site = c("North", "nirth", "South", "East", "west", "NORTH", "Souther")
+)
+#' 3. **Inspect the dataset**:
+summary(messy_data)
+str(messy_data)
+#' ### Step 2: Handle Characters in Numeric Columns
+messy_data%>%
+mutate(Temperature_C= parse_number(Temperature_C)
+)
+#' ### Step 3: Correct Date Column Issues
+messy_data%>%
+mutate(
+ObservationDate= case_when(
+str_detect(ObservationDate,"^[0-9]{4}-")~ymd(ObservationDate),
+str_detect(ObservationDate, "^[A-Za-z]") ~mdy(ObservationDate),
+Firefox file:///D:/Spatial%20Data%20Science_Case_Study/CS3/cs03.R
+1 of 2 9/11/2025, 3:17 PM
+str_detect(ObservationDate, "/") ~ mdy(ObservationDate),
+TRUE ~ NA
+)
+)
+#' ### Step 4: Standardize Categorical Data (Inconsistent Entries)
+messy_data%>%
+mutate(
+Site=str_to_lower(Site),
+Site=case_when(
+Site%in% c("north","nirth") ~ "North",
+Site%in% c("south","souther") ~ "South",
+Site== "east"~ "East",
+Site== "west" ~ "West",
+TRUE~ NA
+)
+)
+#' ### Step 5: Address Out-of-Range Humidity Values
+messy_data%>%
+mutate(
+Humidity_Percent= if_else(
+Humidity_Percent>=0 & Humidity_Percent<=100, Humidity_Percent, NA_real_
+)
+)
+#'
+#' ### Step 6: Final Inspection and Save the Cleaned Dataset
+summary(messy_data)
+str(messy_data)
+#' 3. **Save the transformed dataset**:
+if (!dir.exists("data_processed")) dir.create("data_processed")
+write_csv(messy_data, "data_processed/cleaned_field_data.csv")
+Firefox file:///D:/Spatial%20Data%20Science_Case_Study/CS3/cs03.R
+2 of 2 9/11/2025, 3:17 PM
